@@ -5,4 +5,6 @@ Public transport systems increasingly rely on near real-time data to improve ser
 
 ## System Architecture
 
-
+<p align="center">
+  <img src="images/architecture.png" width="1000">
+</p>
