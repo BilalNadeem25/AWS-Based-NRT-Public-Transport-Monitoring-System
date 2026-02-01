@@ -12,4 +12,8 @@ Public transport systems increasingly rely on near real-time data to improve ser
 A shared AWS environment was configured to support collaborative development of a near real-time bus monitoring dashboard. The following setups focus on secure authentication, shared access to compute, and a common workspace:
 
 ### 1. EC2 Instance
+<p align="center">
+  <img src="images/ec2-instance.png" width="1000">
+</p>
 
+An AWS EC2 instance is created to serve as a central compute node for hosting required scripts to run the application. It is also used to provide a shared environment with a single operating system to run the same command line tools for all users.
