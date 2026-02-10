@@ -54,6 +54,51 @@ An AWS EC2 instance is created to serve as a central compute node for hosting re
   ```
 </details>
 
+<details>
+  <summary><strong>Creating a S3 Bucket</strong></summary>
+  Amazon S3 is the primary storage system serving each layer of the pipeline. It provides scalable, durable and flexible storage for any raw and processed data, allowing easy access and integration with other AWS services. To support the storage of data at every layer and all log files, a S3 bucket called ‘gtfs-s3’ was created.
+  
+  <p align="center">
+    <img src="images/S3.png" width="1000">
+  </p>
+</details>
+
+## Deployment
+
+### Data Ingestion
+Vehicle data is ingested by polling the GTFS API in JSON format from the data.gov.my endpoint at the set time interval. The python script `gtfs_to_s3.py` is developed and stored in the project directory on the EC2 instance. It writes the retrieved data to an Amazon S3 bucket under the /input/directory. Each output file includes a timestamp in the filename which allows the system to track recency and processing order.
+
+### Data Processing
+Amazon EMR cluster is created to support distributed batch processing of GTFS vehicle position data that is stored within S3 bucket as a JSON file. The cluster is created using EMR release 6.15.0 with Apache Spark and parameter instance-count is set to 2 to configure the cluster with a master node and a worker node to enable distributed computing of continuously incoming large-scale vehicle data. The configuration is as follows:
+```
+aws emr create-cluster \
+--name GTFS EMR-BATCH \
+--release-label emr-6.15.0 \
+--applications Name=Spark \
+--use-default-roles \
+--instance-type m5.xlarge \
+--instance-count 2 \
+--log-uri s3://gtfs-s3/emr-logs/
+```
+
+Apache Spark Structured Streaming is used to implement the following processing steps: 
+1. Data Validation - This step ensures each record follows the expected GTFS format. 
+2. Transformation - The system cleans and standardizes the data, where it aligns fields such as vehicle IDs, trip details, time values, and location points. 
+3. Aggregation - The system derives metrics for different granularities like trip and route level.
+
+The PySpark application code is written to a python script called `spark_gtfs_emr_final.py` and uploaded into the S3 bucket. The Spark job is submitted to the EMR cluster using a bash script called `run-emr.sh` after dynamically selecting the most recent GTFS vehicle position file stored in the S3 bucket. 
+
+### Automation and Scheduling
+
+A cron scheduler is configured on the EC2 instance to automate the ingestion process. The first step of the scheduler triggers the `gtfs_to_s3.py` script every 30 seconds, with the first entry running at the start of the minute and second entry running after a 30-second delay. Log output is written to a local log file to verify script execution and error tracking. Crontab is installed on the EC2 instance before running the following command in the instance to automate the ingestion and processing pipeline:
+
+```
+* * * * * /usr/bin/python3 /wqd7008/aws-project/gtfs_to_s3.py >> /wqd7008/aws-project/logs/cron.log 2>&1
+* * * * * sleep 30; /usr/bin/python3 /wqd7008/aws-project/gtfs_to_s3.py >> /wqd7008/aws-project/logs/cron.log 2>&1
+
+```
+
+
 
 
 
