@@ -9,9 +9,8 @@ Public transport systems increasingly rely on near real-time data to improve ser
 </p>
 
 ## Pre-requisites
-A shared AWS environment was configured to support collaborative development of a near real-time bus monitoring dashboard. The following setups focus on secure authentication, shared access to compute, and a common workspace:
+A shared AWS environment was configured to support collaborative development of a near real-time bus monitoring dashboard. The following setups focus on secure authentication, shared access to compute, and a common workspace.
 
-### 1. EC2 Instance
 <p align="center">
   <img src="images/ec2-instance.png" width="1000">
 </p>
@@ -41,7 +40,20 @@ An AWS EC2 instance is created to serve as a central compute node for hosting re
      ```
 </details>
 
-### 2. Shared Project Workspace
+<details>
+  <summary><strong>Creating a Shared Project Directory</strong></summary>
+  
+  A shared project directory is created to store all scripts required to run the system along with log and config files. To manage every team member's permissions, a Linux group is created.
+  Each user is added to that group and the ownership of the group is given to the admin account. Read and write permissions are provided to the owner and the group for the directory. The following code is used:
+  ```
+  sudo mkdir -p /wqd7008/aws-project
+  sudo groupadd gtfs
+  sudo usermod -aG <username>
+  sudo chown ec2-user:gtfs /wqd7008/aws-project
+  sudo chmod 775 /wqd7008/aws-project
+  ```
+</details>
+
 
 
 
