@@ -134,5 +134,13 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-c
 
 Each log file is mapped to a separate log group in AWS; cron.log is mapped to /gtfs/ec2/poller and emr_cron.log is mapped to /gtfs/ec2/emr. The agent generated unique log stream IDs for each log group.
 
+<p align="center">
+  <img src="images/logs.png" width="800">
+</p>
 
+For the dashboard, a few widgets are created to encapsulate a performance or status metric from each stage of the pipeline. A stacked area chart is shown to display the number of bus locations being fetched every 30 seconds by the poller. This acts as the heartbeat of the polling app, indicating its activity. A line chart widget is created for displaying the YARN memory available in the Spark cluster. Two gauge meters are shown to represent the number of core worker nodes that are running and pending. Since the Spark EMR cluster is configured with one master node and one worker node, that worker node is running, hence none are pending. A line chart widget is shown to display the CPU utilization of the EC2 instance. Lastly, two number widgets indicate the bytes processed by Athena and the total time it takes to run a SELECT query in Athena.
+
+<p align="center">
+  <img src="images/system-monitoring.png" width="800">
+</p>
 
