@@ -95,8 +95,23 @@ A cron scheduler is configured on the EC2 instance to automate the ingestion pro
 ```
 * * * * * /usr/bin/python3 /wqd7008/aws-project/gtfs_to_s3.py >> /wqd7008/aws-project/logs/cron.log 2>&1
 * * * * * sleep 30; /usr/bin/python3 /wqd7008/aws-project/gtfs_to_s3.py >> /wqd7008/aws-project/logs/cron.log 2>&1
+```
+After the ingestion has completed, the Spark cron job executes to read the latest vehicle position file from S3. With this, Spark processes the data and writes updated Parquet and CSV outputs back to S3 for storage purposes.
 
 ```
+* * * * * /bin/bash /wqd7008/aws-project/run_emr.sh >> /wqd7008/aws-project/logs/emr_cron.log 2>&1
+* * * * * sleep 30; /bin/bash /wqd7008/aws-project/run_emr.sh >> /wqd7008/aws-project/logs/emr_cron.log 2>&1
+```
+
+## Dashboard
+
+A near real-time visualization dashboard is developed using Streamlit to present insights in an interactive and user-friendly manner. The visualization layer accesses processed data through Amazon Athena, which is configured to read Parquet datasets stored in an Amazon S3 bucket. Athena tables for latest vehicle positions, trip level metrics and route level metrics are created. Streamlit issues SQL queries to these tables at each refresh cycle, and Athena retrieves the most recent processed results from S3 and stores them as pandas dataframes. These dataframes are used to provide data for the visualizations. This architecture avoids direct file handling in the dashboard while maintaining a clear separation between data storage, processing, querying, and presentation layers.
+
+The dashboard provides interactive visual analytics that support monitoring of transit system performance, including:
+  * Real-time vehicle movement patterns visualized through a live geographic map of vehicle positions
+  * Route-level traffic and speed trends, summarised through aggregated performance metrics
+  * Service reliability and operational indicators such as stopped vehicles, congested routes, and data freshness metrics derived from update timestamps
+
 
 
 
