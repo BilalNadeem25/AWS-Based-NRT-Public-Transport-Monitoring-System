@@ -112,8 +112,27 @@ The dashboard provides interactive visual analytics that support monitoring of t
   * Route-level traffic and speed trends, summarised through aggregated performance metrics
   * Service reliability and operational indicators such as stopped vehicles, congested routes, and data freshness metrics derived from update timestamps
 
+<p align="center">
+  <img src="images/dashboard-1.png" width="800">
+</p>
 
+<p align="center">
+  <img src="images/dashboard-2.png" width="800">
+</p>
 
+<p align="center">
+  <img src="images/dashboard-3.png" width="800">
+</p>
+
+## System Monitoring
+
+For monitoring system performance and logs produced by each application, Amazon CloudWatch is used. To integrate the logs stored in the shared directory of the EC2 instance with CloudWatch, Amazon CloudWatch Agent was installed on the instance. A configuration file called `amazon-cloudwatch-agent.json` in the /etc/ directory of aws/amazon-cloudwatch-agent was configured to inform CloudWatch the locations to fetch the logs from. The CloudWatch Agent was executed using the command:
+
+```
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+```
+
+Each log file is mapped to a separate log group in AWS; cron.log is mapped to /gtfs/ec2/poller and emr_cron.log is mapped to /gtfs/ec2/emr. The agent generated unique log stream IDs for each log group.
 
 
 
