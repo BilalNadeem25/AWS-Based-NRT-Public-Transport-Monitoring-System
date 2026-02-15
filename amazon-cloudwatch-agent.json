@@ -1,0 +1,28 @@
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "root"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/wqd7008/aws-project/logs/cron.log",
+            "log_group_name": "/gtfs/ec2/poller",
+            "log_stream_name": "{instance_id}",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
+          },
+          {
+            "file_path": "/wqd7008/aws-project/logs/emr_cron.log",
+            "log_group_name": "/gtfs/ec2/emr",
+            "log_stream_name": "{instance_id}",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
+          }
+        ]
+      }
+    },
+    "log_stream_name": "agent",
+    "force_flush_interval": 15
+  }
+}
